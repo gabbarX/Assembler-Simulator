@@ -1,3 +1,4 @@
+# Mention of the registors
 registors = {
     "R0": "000",
     "R1": "001",
@@ -31,4 +32,6 @@ codes={
     "hlt": ["01010", "F"],   
 }
 
-
+# Main program
+if __name__== "__main__":
+    print("Welcome to the COASS assembler")
