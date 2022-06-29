@@ -35,7 +35,19 @@ codes={
 
 
 def decimalTo8bitBinary(num):
-    pass
+    n = int(num)
+    s = ''
+    while n>0:4
+        digit = int(n%2)
+        if digit<2:
+            s += str(digit)
+        else:
+            s += chr(ord('A') + digit - 2)
+        n //= 2
+    s = s[::-1]
+    if len(s) < 8:
+        s = "0" * (8 - len(s)) + str(s)
+    return str(s)
 
 
 def printTypeA(opcode, reg1, reg2, reg3):
@@ -71,9 +83,3 @@ if __name__== "__main__":
 for i in data:
     curr = list(i.split())
     print(curr)
-
-# Main program
-if __name__== "__main__":
-    print("Welcome to the assembler!")
-    l = ["mul", "R3", "R1", "R2"]
-    printTypeA(l[0], l[1], l[2], l[3])
