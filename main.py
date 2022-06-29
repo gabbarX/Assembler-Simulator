@@ -29,9 +29,12 @@ codes={
     "jlt": ["01100", "E"],
     "jgt": ["01101", "E"],
     "je": ["01111", "E"],
-    "hlt": ["01010", "F"],   
+    "hlt": ["01010", "F"],
 }
+
+
 
 # Main program
 if __name__== "__main__":
-    print("Welcome to the COASS assembler")
+    print("Welcome to the assembler!")
+    
