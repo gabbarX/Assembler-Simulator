@@ -34,7 +34,7 @@ codes={
 }
 
 
-def decimalTo8bitBinary():
+def decimalTo8bitBinary(num):
     pass
 
 
@@ -50,11 +50,11 @@ def printTypeC(opcode, reg1, reg2):
     print(f"{codes[opcode][0]}00000{registors[reg1]}{registors[reg2]}")
 
 
-def printTypeD(opcode, reg1, reg2, address):
+def printTypeD(opcode, reg1, address):
     print(f"{codes[opcode][0]}{registors[reg1]}{address}")
 
 
-def printTypeE(opcode, reg1, reg2, reg3):
+def printTypeE(opcode, address):
     print(f"{codes[opcode][0]}000{address}")
 
 
