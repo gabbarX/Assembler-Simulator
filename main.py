@@ -58,6 +58,8 @@ def printTypeF(opcode, reg1, reg2, reg3):
     pass
 
 
+
+
 # Main program
 if __name__== "__main__":
     print("Welcome to the COASS assembler")
@@ -67,3 +69,8 @@ if __name__== "__main__":
 for i in data:
     curr = list(i.split())
     print(curr)
+
+# Main program
+if __name__== "__main__":
+    print("Welcome to the assembler!")
+    
