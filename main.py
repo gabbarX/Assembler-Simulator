@@ -35,7 +35,19 @@ codes={
 
 
 def decimalTo8bitBinary(num):
-    pass
+    n = int(num)
+    s = ''
+    while n>0:
+        digit = int(n%2)
+        if digit<2:
+            s += str(digit)
+        else:
+            s += chr(ord('A') + digit - 2)
+        n //= 2
+    s = s[::-1]
+    if len(s) < 8:
+        s = "0" * (8 - len(s)) + str(s)
+    return str(s)
 
 
 def printTypeA(opcode, reg1, reg2, reg3):
