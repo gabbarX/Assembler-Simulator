@@ -34,30 +34,32 @@ codes={
 }
 
 
+def decimalTo8bitBinary(num):
+    pass
+
+
 def printTypeA(opcode, reg1, reg2, reg3):
-    pass
+    print(f"{codes[opcode][0]}00{registors[reg1]}{registors[reg2]}{registors[reg3]}")
 
 
-def printTypeB(opcode, reg1, reg2, reg3):
-    pass
+def printTypeB(opcode, reg1, value):
+    print(f"{codes[opcode[0]]}{registors[reg1]}{decimalTo8bitBinary(value)}")
 
 
-def printTypeC(opcode, reg1, reg2, reg3):
-    pass
+def printTypeC(opcode, reg1, reg2):
+    print(f"{codes[opcode][0]}00000{registors[reg1]}{registors[reg2]}")
 
 
-def printTypeD(opcode, reg1, reg2, reg3):
-    pass
+def printTypeD(opcode, reg1, address):
+    print(f"{codes[opcode][0]}{registors[reg1]}{address}")
 
 
-def printTypeE(opcode, reg1, reg2, reg3):
-    pass
+def printTypeE(opcode, address):
+    print(f"{codes[opcode][0]}000{address}")
 
 
 def printTypeF(opcode, reg1, reg2, reg3):
-    pass
-
-
+    print(f"{codes[opcode][0]}00000000000")
 
 
 # Main program
@@ -73,4 +75,5 @@ for i in data:
 # Main program
 if __name__== "__main__":
     print("Welcome to the assembler!")
-    
+    l = ["mul", "R3", "R1", "R2"]
+    printTypeA(l[0], l[1], l[2], l[3])
