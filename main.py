@@ -37,7 +37,7 @@ codes={
 def decimalTo8bitBinary(num):
     n = int(num)
     s = ''
-    while n>0:4
+    while n>0:
         digit = int(n%2)
         if digit<2:
             s += str(digit)
