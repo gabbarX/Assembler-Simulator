@@ -62,18 +62,59 @@ def printTypeF(opcode, reg1, reg2, reg3):
     print(f"{codes[opcode][0]}00000000000")
 
 
-# Main program
-if __name__== "__main__":
-    print("Welcome to the COASS assembler")
-    with open("practiseInput.txt", "r") as file:
-        data = file.read().split("\n")
+variables=[]
+variablecount=0
+temp=[]
+temp1=[]
 
-for i in data:
-    curr = list(i.split())
-    print(curr)
+# Main program
+# if __name__== "__main__":
+#     print("Welcome to the COASS assembler")
+#     with open("practiseInput.txt", "r") as file:
+#         # data = file.readline()
+#         # print(data)
+#         data=file.read()
+#         temp=data.split("\n")
+#         print(temp)
+
+#     if temp
+
+# while True:
+#     try:
+#         line = input()
+#         if line.strip != '':
+#             temp.append(line)
+#         temp1.append(line)
+#     except EOFError:
+#         break
+        
+
 
 # Main program
 if __name__== "__main__":
     print("Welcome to the assembler!")
-    l = ["mul", "R3", "R1", "R2"]
-    printTypeA(l[0], l[1], l[2], l[3])
+    with open("practiseInput.txt", "r") as file:
+        data = file.read().split("\n")
+    
+    data.pop()
+    for i in data:
+        temp = list(i.split())
+        if temp[0]=='var':
+            variables.append(temp[1])
+            variablecount+=1
+            continue
+        if codes[temp[0]][1] == 'A':
+            printTypeA(temp[0], temp[1], temp[2], temp[3])
+        if codes[temp[0]][1] == 'B':
+            printTypeB(temp[0], temp[1], temp[2], temp[3])
+        if codes[temp[0]][1] == 'C':
+            printTypeC(temp[0], temp[1], temp[2], temp[3])
+        if codes[temp[0]][1] == 'D':
+            printTypeD(temp[0], temp[1], temp[2], temp[3])
+        if codes[temp[0]][1] == 'E':
+            printTypeE(temp[0], temp[1], temp[2], temp[3])
+        if codes[temp[0]][1] == 'F':
+            printTypeF(temp[0], temp[1], temp[2], temp[3])
+   
+    # s = 'mul'
+    # print(codes[s][1])
