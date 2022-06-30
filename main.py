@@ -1,4 +1,4 @@
-# Mention of the registors
+# Mention of the Registors
 registors = {
     "R0": "000",
     "R1": "001",
@@ -9,7 +9,7 @@ registors = {
     "R6": "110",
     "FLAGS": "111"}
 
-
+#Mention of Instructions
 codes={
     "add": ["10000", "A"],
     "sub": ["10001", "A"],
@@ -34,20 +34,17 @@ codes={
 }
 
 
+#Functions
 def decimalTo8bitBinary(num):
     n = int(num)
-    s = ''
+    ns = ""
     while n>0:
-        digit = int(n%2)
-        if digit<2:
-            s += str(digit)
-        else:
-            s += chr(ord('A') + digit - 2)
-        n //= 2
-    s = s[::-1]
-    if len(s) < 8:
-        s = "0" * (8 - len(s)) + str(s)
-    return str(s)
+        ns += str(n%2)
+        n = n//2
+    nf = ns[::-1]
+    if len(nf) < 8:
+        nf = "0" * (8 - len(nf)) + str(nf)
+    return str(nf)
 
 
 def printTypeA(opcode, reg1, reg2, reg3):
@@ -55,7 +52,12 @@ def printTypeA(opcode, reg1, reg2, reg3):
 
 
 def printTypeB(opcode, reg1, value):
-    print(f"{codes[opcode[0]]}{registors[reg1]}{decimalTo8bitBinary(value)}")
+    n = int(value[1::])
+    if (n <= 255 and n >= 0):
+        print(f"{codes[opcode][0]}{registors[reg1]}{decimalTo8bitBinary(value[1::])}")
+    else:
+        print("\nERROR\nIllegal Immediate Value used!")
+        exit()
 
 
 def printTypeC(opcode, reg1, reg2):
@@ -70,63 +72,84 @@ def printTypeE(opcode, address):
     print(f"{codes[opcode][0]}000{address}")
 
 
-def printTypeF(opcode, reg1, reg2, reg3):
+def printTypeF(opcode):
     print(f"{codes[opcode][0]}00000000000")
 
 
 variables=[]
 variablecount=0
-temp=[]
-temp1=[]
-
-# Main program
-# if __name__== "__main__":
-#     print("Welcome to the COASS assembler")
-#     with open("practiseInput.txt", "r") as file:
-#         # data = file.readline()
-#         # print(data)
-#         data=file.read()
-#         temp=data.split("\n")
-#         print(temp)
-
-#     if temp
-
-# while True:
-#     try:
-#         line = input()
-#         if line.strip != '':
-#             temp.append(line)
-#         temp1.append(line)
-#     except EOFError:
-#         break
-        
-
+track = 0
 
 # Main program
 if __name__== "__main__":
-    print("Welcome to the assembler!")
+    print("Welcome to the Assembler!")
     with open("practiseInput.txt", "r") as file:
         data = file.read().split("\n")
-    
     data.pop()
-    for i in data:
-        temp = list(i.split())
-        if temp[0]=='var':
-            variables.append(temp[1])
-            variablecount+=1
-            continue
-        if codes[temp[0]][1] == 'A':
-            printTypeA(temp[0], temp[1], temp[2], temp[3])
-        if codes[temp[0]][1] == 'B':
-            printTypeB(temp[0], temp[1], temp[2], temp[3])
-        if codes[temp[0]][1] == 'C':
-            printTypeC(temp[0], temp[1], temp[2], temp[3])
-        if codes[temp[0]][1] == 'D':
-            printTypeD(temp[0], temp[1], temp[2], temp[3])
-        if codes[temp[0]][1] == 'E':
-            printTypeE(temp[0], temp[1], temp[2], temp[3])
-        if codes[temp[0]][1] == 'F':
-            printTypeF(temp[0], temp[1], temp[2], temp[3])
-   
-    # s = 'mul'
-    # print(codes[s][1])
+
+    print("\nMachine Code:-")
+    try:
+        for i in data:
+            temp = list(i.split())
+            # print(temp)
+            if temp[0] == 'var':
+                variables.append(temp[1])
+                variablecount += 1
+                track += 1
+                continue
+
+            if temp[0] == "mov":
+                if (temp[2][0]) == "$":
+                    printTypeB(temp[0], temp[1], temp[2])
+                    track += 1
+                    continue
+                else:
+                    printTypeC(temp[0], temp[1], temp[2])
+                    track += 1
+                    continue
+
+            if codes[temp[0]][1] == 'A':
+                printTypeA(temp[0], temp[1], temp[2], temp[3])
+                track += 1
+
+            if codes[temp[0]][1] == 'B':
+                printTypeB(temp[0], temp[1], temp[2])
+                track += 1
+
+            if codes[temp[0]][1] == 'C':
+                printTypeC(temp[0], temp[1], temp[2])
+                track += 1
+
+            if (codes[temp[0]][1] == 'D'):
+                if (temp[2] in variables):
+                    printTypeD(temp[0], temp[1], temp[2])
+                    track += 1
+                else:
+                    print("\nERROR\nUndefined Varaible Used!")
+                    exit()
+
+            if codes[temp[0]][1] == 'E':
+                printTypeE(temp[0], temp[1])
+                track += 1
+
+            if codes[temp[0]][1] == 'F':
+                printTypeF(temp[0])
+                track += 1
+                break
+
+        if track != len(data):
+            print("\nERROR\nLast Instruction is required to be HLT")
+            exit()
+        if temp != ['hlt']:
+            print("\nERROR\nHLT Instruction Missing!")
+        else:
+            print(f"\nNumber of Variables: {variablecount}")
+            print("Variables:-", end = " ")
+            for i in variables:
+                print(i, end = " ")
+            print()
+    except KeyError:
+        print("\nERROR\nThe given Instructions/Registors are not VALID!")
+        exit()
+    except:
+        print("\nERROR\nGeneral Syntax Error")
