@@ -153,7 +153,7 @@ if __name__== "__main__":
                     exit()
 
             if temp[0] == "jmp" or temp[0] == "jlt" or temp[0] == "jgt" or temp[0] == "je":
-                printTypeB(temp[0], temp[1])
+                printTypeE(temp[0], temp[1])
                 track += 1
                 continue
 
