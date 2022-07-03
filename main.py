@@ -93,7 +93,7 @@ var = {}
 variables = []
 variablecount = 0
 track = 0
-
+lables={}
 
 # Main program
 if __name__== "__main__":
