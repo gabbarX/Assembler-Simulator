@@ -1,3 +1,5 @@
+import sys
+
 # Mention of the Registors
 registors = {
     "R0": "000",
@@ -148,10 +150,14 @@ if __name__== "__main__":
             if (len(i) != 0):
                 initialcode.append(i)
 
+
     # for line in sys.stdin:
-    #     if "" in line.rstrip():
+    #     if "" == line.rstrip():
     #         break
-    #     initialcode.append(line)
+    #     initialcode.append(line.strip())
+
+
+    # print(initialcode)
 
     # while True:
     #     try:
@@ -161,15 +167,12 @@ if __name__== "__main__":
     #     else:
     #         if(len(line)!=0):
     #             initialcode.append(line)
-
-
     # print(initialcode[-1])
-
     # for i in initialcode:
     #     print(i.strip().split())
 
     storeAddress()
-
+    check= True
     for temp in code:
         if "FLAGS" in temp:
             check = flagcheck(temp)
@@ -190,7 +193,7 @@ if __name__== "__main__":
                         if (n <= 255 and n >= 0):
                             result.append(printTypeB(temp[0], temp[1], temp[2][1::]))
                         else:
-                            print("\nERROR\nIllegal Immediate Value used!")
+                            print("\nERROR\nIllegal Immediate Value used! At Line:",len(variables) + code.index(temp)+1)
                             errorcount += 1
                             quit()
                         result.append(printTypeB(temp[0], temp[1], temp[2]))

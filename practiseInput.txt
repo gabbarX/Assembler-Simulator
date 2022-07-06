@@ -1,9 +1,6 @@
-var X 
-var Y
+var X
 mov R1 $10
-mov R2 $100
-mylabel: add R1 R2 R3
-mul R3 R1 R2 
-st R3 X 
-jmp mylabel
+mov R2 $1000
+mul R3 R1 R2
+st R3 X
 hlt
