@@ -192,7 +192,7 @@ if __name__== "__main__":
                         if (n <= 255 and n >= 0):
                             result.append(printTypeB(temp[0], temp[1], temp[2][1::]))
                         else:
-                            print("\nERROR\nIllegal Immediate Value used! At Line:",len(variables) + code.index(temp)+1)
+                            print("\nERROR\nIllegal Immediate Value used at Line:",len(variables) + code.index(temp)+1)
                             errorcount += 1
                             quit()
                         result.append(printTypeB(temp[0], temp[1], temp[2]))
@@ -219,8 +219,9 @@ if __name__== "__main__":
                     if (temp[2] in variables.keys()):
                         result.append(printTypeD(temp[0], temp[1], temp[2]))
                         track += 1
+                        
                     else:
-                        print("\nERROR\nUndefined Varaible Used!")
+                        print("\nERROR\nUndefined Varaible Used at Line: ", len(variables) + code.index(temp)+1)
                         errorpresent = True
                         errorcount += 1
                         exit()
@@ -229,11 +230,13 @@ if __name__== "__main__":
                     if (temp[1] in label.keys()):
                         result.append(printTypeE(temp[0], temp[1]))
                         track += 1
+
                     else:
-                        print("\nERROR\nUndefined Label Used!")
+                        print("\nERROR\nUndefined Label Used at Line: ", len(variables) + code.index(temp)+1)
                         errorpresent = True
                         errorcount += 1
                         exit()
+
                 if codes[temp[0]][1] == 'F':
                     result.append(printTypeF(temp[0]))
                     track += 1
@@ -244,15 +247,21 @@ if __name__== "__main__":
                 errorpresent = True
                 errorcount += 1
                 exit()
+
+
             if code[-1] != ['hlt']:
                 print("\nERROR\nHLT Instruction Missing or Misplaced!")
                 errorpresent = True
                 errorcount += 1
+
+
         except KeyError:
             print("\nERROR\nThe given Instructions/Registors are not VALID!")
             errorpresent = True
             errorcount += 1
             exit()
+
+
         except:
             if (errorcount == 0):
                 print("\nERROR\nGeneral Syntax Error")
@@ -260,10 +269,12 @@ if __name__== "__main__":
             else:
                 exit()
 
+
     else:
         print("\nERROR\nFlag Error")
         errorpresent = True
         exit()
+
 
 if errorpresent is False:
     for i in result:
