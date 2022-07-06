@@ -1,5 +1,3 @@
-import sys
-
 # Mention of the Registors
 registors = {
     "R0": "000",
@@ -33,6 +31,20 @@ codes = {
     "jgt": ["01101", "E"],
     "je": ["01111", "E"],
     "hlt": ["01010", "F"]}
+
+
+#global Varaibles
+errorpresent=False
+errorcount = 0
+variablecount=0
+track = 0
+label = {}
+variables = {}
+code=[]
+initialcode=[]
+temp=[]
+count=0
+result = []
 
 
 #Functions
@@ -104,13 +116,8 @@ def printTypeA(opcode, reg1, reg2, reg3):
 
 
 def printTypeB(opcode, reg1, value):
-    n = int(value[1::])
-    if (n <= 255 and n >= 0):
-        ns = (f"{codes[opcode][0]}{registors[reg1]}{decimalTo8bitBinary(value[1::])}")
-        return ns
-    else:
-        print("\nERROR\nIllegal Immediate Value used!")
-        quit()
+    ns = (f"{codes[opcode][0]}{registors[reg1]}{decimalTo8bitBinary(value[1::])}")
+    return ns
 
 
 def printTypeC(opcode, reg1, reg2):
@@ -133,17 +140,6 @@ def printTypeF(opcode):
     return ns
 
 
-variablecount=0
-track = 0
-label = {}
-variables = {}
-code=[]
-initialcode=[]
-temp=[]
-count=0
-result = []
-error = []
-
 # Main program
 if __name__== "__main__":
     with open("practiseInput.txt", "r") as file:
@@ -151,7 +147,27 @@ if __name__== "__main__":
         for i in data:
             if (len(i) != 0):
                 initialcode.append(i)
-    
+
+    # for line in sys.stdin:
+    #     if "" in line.rstrip():
+    #         break
+    #     initialcode.append(line)
+
+    # while True:
+    #     try:
+    #         line = input()
+    #     except EOFError:
+    #         break
+    #     else:
+    #         if(len(line)!=0):
+    #             initialcode.append(line)
+
+
+    # print(initialcode[-1])
+
+    # for i in initialcode:
+    #     print(i.strip().split())
+
     storeAddress()
 
     for temp in code:
@@ -170,6 +186,13 @@ if __name__== "__main__":
 
                 if temp[0] == "mov":
                     if (temp[2][0]) == "$":
+                        n = int(temp[2][1::])
+                        if (n <= 255 and n >= 0):
+                            result.append(printTypeB(temp[0], temp[1], temp[2][1::]))
+                        else:
+                            print("\nERROR\nIllegal Immediate Value used!")
+                            errorcount += 1
+                            quit()
                         result.append(printTypeB(temp[0], temp[1], temp[2]))
                         track += 1
                         continue
@@ -196,6 +219,8 @@ if __name__== "__main__":
                         track += 1
                     else:
                         print("\nERROR\nUndefined Varaible Used!")
+                        errorpresent = True
+                        errorcount += 1
                         exit()
 
                 if codes[temp[0]][1] == 'E':
@@ -204,26 +229,40 @@ if __name__== "__main__":
                         track += 1
                     else:
                         print("\nERROR\nUndefined Label Used!")
+                        errorpresent = True
+                        errorcount += 1
                         exit()
                 if codes[temp[0]][1] == 'F':
                     result.append(printTypeF(temp[0]))
                     track += 1
                     break
 
-            for i in result:
-                print(i)
-
             if track != len(code):
                 print("\nERROR\nLast Instruction is required to be HLT")
+                errorpresent = True
+                errorcount += 1
                 exit()
-            if code[-1] != ["hlt"]:
-                print("\nERROR\nHLT Instruction Missing!")
+            if code[-1] != ['hlt']:
+                print("\nERROR\nHLT Instruction Missing or Misplaced!")
+                errorpresent = True
+                errorcount += 1
         except KeyError:
             print("\nERROR\nThe given Instructions/Registors are not VALID!")
+            errorpresent = True
+            errorcount += 1
             exit()
         except:
-            print("\nERROR\nGeneral Syntax Error")
+            if (errorcount == 0):
+                print("\nERROR\nGeneral Syntax Error")
+                errorpresent = True
+            else:
+                exit()
 
     else:
         print("\nERROR\nFlag Error")
+        errorpresent = True
         exit()
+
+if errorpresent is False:
+    for i in result:
+        print(i)
