@@ -105,7 +105,9 @@ def memoryAddressofLabel(key):
 
 #Flag Check
 def flagcheck(command):
-    if command[0]=='mov' and command[1]!='FLAGS' and command[2]=='FLAGS':
+    # print(command)
+    if command[0]=='mov' and (command[1]=='FLAGS' and command[2]!='FLAGS'):
+        # print(command[0])
         return True
     else:
         return False
@@ -145,17 +147,18 @@ def printTypeF(opcode):
 
 # Main program
 if __name__== "__main__":
-    # with open("practiseInput.txt", "r") as file:
-    #     data = file.read().split("\n")
-    #     for i in data:
-    #         if (len(i) != 0):
-    #             initialcode.append(i)
+    
+    with open("practiseInput.txt", "r") as file:
+        data = file.read().split("\n")
+        for i in data:
+            if (len(i) != 0):
+                initialcode.append(i)
 
 
-    for line in sys.stdin:
-        if "" == line.rstrip():
-            break
-        initialcode.append(line.strip())
+    # for line in sys.stdin:
+    #     if "" == line.rstrip():
+    #         break
+    #     initialcode.append(line.strip())
 
 
     # print(initialcode)
@@ -172,14 +175,17 @@ if __name__== "__main__":
     #     print(i.strip().split())
 
     storeAddress()
-    check= True
+    # print(code)
+    check=True
     for temp in code:
         if "FLAGS" in temp:
+            # print(temp)
             check = flagcheck(temp)
-        else:
-            check = True
 
-    if check is True:
+
+
+    # print(check)
+    if check:
         try:
             for temp in code:
                 if temp[0] == 'var':
@@ -251,7 +257,7 @@ if __name__== "__main__":
                 exit()
 
 
-            if code[-1] != ['hlt']:
+            if initialcode[-1] != 'hlt':
                 print("\nERROR\nHLT Instruction Missing or Misplaced!")
                 errorpresent = True
                 errorcount += 1
@@ -271,9 +277,8 @@ if __name__== "__main__":
             else:
                 exit()
 
-
     else:
-        print("\nERROR\nFlag Error")
+        print("Flag Error at line: ", len(variables) + code.index(temp))
         errorpresent = True
         exit()
 
@@ -281,3 +286,6 @@ if __name__== "__main__":
 if errorpresent is False:
     for i in result:
         print(i)
+
+# print(initialcode)
+# print(code)

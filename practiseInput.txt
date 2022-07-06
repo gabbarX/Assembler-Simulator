@@ -1,7 +1,7 @@
-mov R1 $5
-mov R1 $5
-mov R1 $5
-mov R1 $5
-mov R1 $5
-mov R1 $5
+mov	R0 $255
+mov	R0 $0
+mov	R0 $1
+mov	R0 $4
+rs R1 $2
+ls R1 $1
 hlt
