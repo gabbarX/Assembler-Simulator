@@ -21,7 +21,7 @@ codes = {
     "st": ["10001", "D"],
     "mul": ["10110", "A"],
     "div": ["10111", "C"],
-    "rs": ["11000", ""],
+    "rs": ["11000", "B"],
     "ls": ["11001", "B"],
     "xor": ["11010", "A"],
     "or": ["11011", "A"],
@@ -148,17 +148,17 @@ def printTypeF(opcode):
 # Main program
 if __name__== "__main__":
     
-    with open("practiseInput.txt", "r") as file:
-        data = file.read().split("\n")
-        for i in data:
-            if (len(i) != 0):
-                initialcode.append(i)
+    # with open("practiseInput.txt", "r") as file:
+    #     data = file.read().split("\n")
+    #     for i in data:
+    #         if (len(i) != 0):
+    #             initialcode.append(i)
 
 
-    # for line in sys.stdin:
-    #     if "" == line.rstrip():
-    #         break
-    #     initialcode.append(line.strip())
+    for line in sys.stdin:
+        if "" == line.rstrip():
+            break
+        initialcode.append(line.strip())
 
 
     # print(initialcode)
