@@ -88,6 +88,11 @@ def printTypeF(opcode):
     print(f"{codes[opcode][0]}00000000000")
 
 
+def returnbinofvar(var):
+    return variables[var]
+
+def returnbinoflabel(key):
+    return label[key]
 
 # Main program
 # if __name__== "__main__":
@@ -181,6 +186,12 @@ initialcode=[]
 temp=[]
 count=0
 
+def flagcheck(command):
+    if command[0]=='mov' and command[1]!='FLAGS' and command[2]=='FLAGS':
+        return True
+    else:
+        return False
+
 
 def storeAddress():
     global count
@@ -214,12 +225,35 @@ def storeAddress():
             labelname=temp[i][0]
             label[labelname.rstrip(':')]=decimalTo8bitBinary(i)
 
+
 #Main program which takes the input from the user and handles empty lines
 if __name__== "__main__":
-    while True:
-        try:
-            line=input()
-            if(len(line)!=0):
-                initialcode.append(line)
-        except EOFError:
-            break
+    # while True:
+    #     try:
+    #         line=input()
+    #         if(len(line)!=0):
+    #             initialcode.append(line)
+    #     except EOFError:
+    #         break
+
+    with open("practiseInput.txt", "r") as file:
+        d = (file.read()).split("\n")
+        for i in d:
+            if (len(i) != 0):
+                initialcode.append(i)
+
+        for i in initialcode:
+            if 'FLAGS' in i:
+                # if(flagcheck(i)):
+                print(i)                    
+
+
+
+            else:
+                    exit() 
+  
+    storeAddress()
+    print(variables)
+    print(label)
+    print(returnbinofvar('X'))
+
