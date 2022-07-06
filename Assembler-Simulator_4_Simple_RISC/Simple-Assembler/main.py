@@ -118,7 +118,8 @@ def printTypeA(opcode, reg1, reg2, reg3):
 
 
 def printTypeB(opcode, reg1, value):
-    ns = (f"{codes[opcode][0]}{registors[reg1]}{decimalTo8bitBinary(value[1::])}")
+    temp=value.split('$').pop()
+    ns = (f"{codes[opcode][0]}{registors[reg1]}{decimalTo8bitBinary(temp)}")
     return ns
 
 
@@ -190,12 +191,13 @@ if __name__== "__main__":
                     if (temp[2][0]) == "$":
                         n = int(temp[2][1::])
                         if (n <= 255 and n >= 0):
+                            # print((temp[0], temp[1], temp[2][1::]))
                             result.append(printTypeB(temp[0], temp[1], temp[2][1::]))
                         else:
                             print("\nERROR\nIllegal Immediate Value used at Line:",len(variables) + code.index(temp)+1)
                             errorcount += 1
                             quit()
-                        result.append(printTypeB(temp[0], temp[1], temp[2]))
+                        # result.append(printTypeB(temp[0], temp[1], temp[2]))
                         track += 1
                         continue
                     else:
