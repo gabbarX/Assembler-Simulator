@@ -185,7 +185,7 @@ if __name__== "__main__":
 
 
     # print(check)
-    if check:
+    if check is True:
         try:
             for temp in code:
                 if temp[0] == 'var':
@@ -200,7 +200,7 @@ if __name__== "__main__":
                             # print((temp[0], temp[1], temp[2][1::]))
                             result.append(printTypeB(temp[0], temp[1], temp[2][1::]))
                         else:
-                            print("\nERROR\nIllegal Immediate Value used at Line:",len(variables) + code.index(temp)+1)
+                            print("ERROR: Illegal Immediate Value used at Line:",len(variables) + code.index(temp)+1)
                             errorcount += 1
                             quit()
                         # result.append(printTypeB(temp[0], temp[1], temp[2]))
@@ -229,7 +229,7 @@ if __name__== "__main__":
                         track += 1
                         
                     else:
-                        print("\nERROR\nUndefined Varaible Used at Line: ", len(variables) + code.index(temp)+1)
+                        print("ERROR: Undefined Varaible Used at Line ", len(variables) + code.index(temp)+1)
                         errorpresent = True
                         errorcount += 1
                         exit()
@@ -240,7 +240,7 @@ if __name__== "__main__":
                         track += 1
 
                     else:
-                        print("\nERROR\nUndefined Label Used at Line: ", len(variables) + code.index(temp)+1)
+                        print("ERROR: Undefined Label Used at Line ", len(variables) + code.index(temp)+1)
                         errorpresent = True
                         errorcount += 1
                         exit()
@@ -251,20 +251,20 @@ if __name__== "__main__":
                     break
 
             if track != len(code):
-                print("\nERROR\nLast Instruction is required to be HLT")
+                print("ERROR: Last Instruction is required to be HLT")
                 errorpresent = True
                 errorcount += 1
                 exit()
 
 
             if initialcode[-1] != 'hlt':
-                print("\nERROR\nHLT Instruction Missing or Misplaced!")
+                print("ERROR: HLT Instruction Missing or Misplaced!")
                 errorpresent = True
                 errorcount += 1
 
 
         except KeyError:
-            print("\nERROR\nThe given Instructions/Registors are not VALID!")
+            print("ERROR: The given Instructions/Registors are not VALID!")
             errorpresent = True
             errorcount += 1
             exit()
@@ -272,7 +272,7 @@ if __name__== "__main__":
 
         except:
             if (errorcount == 0):
-                print("\nERROR\nGeneral Syntax Error")
+                print("ERROR: General Syntax Error")
                 errorpresent = True
             else:
                 exit()
@@ -286,6 +286,3 @@ if __name__== "__main__":
 if errorpresent is False:
     for i in result:
         print(i)
-
-# print(initialcode)
-# print(code)
