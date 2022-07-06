@@ -144,21 +144,20 @@ def printTypeF(opcode):
 
 # Main program
 if __name__== "__main__":
-    with open("practiseInput.txt", "r") as file:
-        data = file.read().split("\n")
-        for i in data:
-            if (len(i) != 0):
-                initialcode.append(i)
+    # with open("practiseInput.txt", "r") as file:
+    #     data = file.read().split("\n")
+    #     for i in data:
+    #         if (len(i) != 0):
+    #             initialcode.append(i)
 
 
-    # for line in sys.stdin:
-    #     if "" == line.rstrip():
-    #         break
-    #     initialcode.append(line.strip())
+    for line in sys.stdin:
+        if "" == line.rstrip():
+            break
+        initialcode.append(line.strip())
 
 
     # print(initialcode)
-
     # while True:
     #     try:
     #         line = input()
