@@ -1,3 +1,5 @@
+import sys
+
 # Mention of the Registors
 registors = {
     "R0": "000",
