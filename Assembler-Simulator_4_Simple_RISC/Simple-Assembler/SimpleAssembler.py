@@ -225,8 +225,8 @@ if __name__== "__main__":
 
 
     for line in sys.stdin:
-        if "" == line.rstrip():
-            break
+#         if "" == line.rstrip():
+#             break
         initialcode.append(line.strip())
 
     storeAddress()
