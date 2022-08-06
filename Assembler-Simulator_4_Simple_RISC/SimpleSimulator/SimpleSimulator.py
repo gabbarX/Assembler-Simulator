@@ -1,4 +1,5 @@
 import sys
+import matplotlib.pyplot as plt
 
 # Mentions of Registors
 regs = {"000": "0000000000000000",
@@ -12,7 +13,12 @@ regs = {"000": "0000000000000000",
 
 memory_address = []
 programCounter = 0
-cycle_number = 0
+track = 0
+x=[]
+y=[]
+
+def getint(string):
+    return int(string, 2)
 
 #Utility Functions
 def memoryDump():
@@ -38,7 +44,6 @@ def decimal2binary(num):
         nf = "0" * (16 - len(nf)) + str(nf)
     return str(nf)
 
-
 def getbin(num):
     n = int(num)
     ns = ""
@@ -47,12 +52,6 @@ def getbin(num):
         n = n//2
     nf = ns[::-1]
     return(nf)
-
-
-# def IEEE2Decimal(num):
-
-
-
 
 def givepc(value):
     x = getbin(value)
@@ -67,6 +66,7 @@ def printline():
     for i in regs:
         print(regs[i], end=' ')
     print()
+    pass
 
 
 #Functions for Instruction
@@ -347,8 +347,12 @@ def perform(line):
         movreg(line)
     elif opcode == "10100":
         load(line)
+        x.append(track)
+        y.append(getint(line[8:]))
     elif opcode == "10101":
         store(line)
+        x.append(track)
+        y.append(getint(line[8:]))
     elif opcode == "10110":
         mul(line)
     elif opcode == "10111":
@@ -378,9 +382,13 @@ def perform(line):
     elif opcode == "01010":
         hlt(line)
 
+def plot():
+    plt.xlabel('Cycle Number')
+    plt.ylabel("Memory Address")
+    plt.plot(x, y,'o')
+    plt.savefig('output.png')
 
 if __name__ == '__main__':
-    track = 0
     commands=[]
     #Taking Input
     for line in sys.stdin:
@@ -396,7 +404,10 @@ if __name__ == '__main__':
             memory_address.append('0'*16)
 
     while programCounter >= 0 and programCounter < len(commands):
+        x.append(track)
+        y.append(programCounter)
         perform(commands[programCounter])
         track += 1
 
+    plot()
     memoryDump()
