@@ -223,10 +223,15 @@ def printTypeF(opcode):
 # Main program
 if __name__== "__main__":
 
+    # d = open("a.txt", "r")
+    # for line in d:
+    #     if "" == line.rstrip():
+    #         break
+    #     initialcode.append(line.strip())
 
     for line in sys.stdin:
-#         if "" == line.rstrip():
-#             break
+        if "" == line.rstrip():
+            break
         initialcode.append(line.strip())
 
     storeAddress()
@@ -261,7 +266,7 @@ if __name__== "__main__":
                 elif temp[0] == "movf":
                     if (temp[2][0]) == "$":
                         n = float(temp[2][1::])
-                        if (n <= 246 and n >= 0):
+                        if (n <= 252 and n >= 0):
                             l = list((movf(n)[1]))
                             a = l[2:]      
                             la = len(a)
@@ -271,7 +276,7 @@ if __name__== "__main__":
                                 la += 1
                             for i in a:
                                 ans += str(i)
-                            result.append(("00010"+str(registors[temp[1]])+str(decimalToBinaryforexp(movf(n)[0] + 3))+str(ans)))
+                            result.append(("00010"+str(registors[temp[1]])+str(decimalToBinaryforexp(movf(n)[0]))+str(ans)))
 
                         else:
                             print("ERROR: Illegal Immediate Value used at Line:",len(variables) + code.index(temp)+1)
@@ -323,11 +328,12 @@ if __name__== "__main__":
                     track += 1
                     break
 
-            if track != len(code):
-                print("ERROR: Last Instruction is required to be HLT")
-                errorpresent = True
-                errorcount += 1
-                exit()
+            # if track != len(code):
+            #     print("ERROR: Last Instruction is required to be HLT")
+            #     errorpresent = True
+            #     errorcount += 1
+            #     exit()
+
 
             temp = initialcode[-1]
             if (":" in temp):
@@ -336,9 +342,15 @@ if __name__== "__main__":
             else:
                 hltcheck = temp
             if hltcheck != 'hlt':
-                print("ERROR: HLT Instruction Missing or Misplaced!")
-                errorpresent = True
-                errorcount += 1
+                if 'hlt' in initialcode:
+                    print("ERROR: HLT Instruction is Misplaced at line", initialcode.index('hlt') + 1)
+                    errorpresent = True
+                    errorcount += 1
+                else:
+                    print("ERROR: HLT Instruction is Missing at line", len(initialcode))
+                    errorpresent = True
+                    errorcount += 1
+
 
         except KeyError:
             print("ERROR: The given Instructions/Registors are not VALID!")
@@ -348,7 +360,7 @@ if __name__== "__main__":
 
         except:
             if (errorcount == 0):
-                print("ERROR: General Syntax Error")
+                print("ERROR: General Syntax Error at line", track)
                 errorpresent = True
             else:
                 exit()
