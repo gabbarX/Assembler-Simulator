@@ -19,13 +19,6 @@ def memoryDump():
     for i in memory_address:
         print(i)
 
-# def memoryDump(track):
-#     for i in range(track, 256):
-#         for i in regs.values():
-#             print(i, end = " ")
-#         print()
-
-
 def binary2decimal(num):
     n = str(num)[::-1]
     count = 0
@@ -56,6 +49,11 @@ def getbin(num):
     return(nf)
 
 
+# def IEEE2Decimal(num):
+
+
+
+
 def givepc(value):
     x = getbin(value)
     if len(x) < 8:
@@ -65,6 +63,7 @@ def givepc(value):
 
 def printline():
     print(givepc(programCounter), end=' ')
+    # regs["111"] = "0000000000000000"
     for i in regs:
         print(regs[i], end=' ')
     print()
@@ -113,6 +112,17 @@ def movimm(line):
     printline()
     programCounter += 1
 
+
+# def movf(line):
+#     # l = list(str(line))
+#     # a = l[8:]
+#     # exp = a[0] + a[1] + a[2]
+#     # mantissa = a[3] + a[4] + a[5] + a[6] + a[7]
+#     # decimalexp = binaryToDecimal(exp)
+#     # mantissaexp = decimalbinaryToDecimal(mantissa)
+#     # ans = (2**decimalexp - 3)*(1 + mantissaexp)
+#     reg = line[5:8]
+#     value = IEEE2decimal(line[8:])
 
 def movreg(line):
     global programCounter
@@ -259,6 +269,7 @@ def compare(line):
     if reg1 == reg2:
         regs["111"] = "0000000000000001"
     printline()
+    # regs["111"] = "0000000000000000"
     programCounter += 1
 
 
@@ -266,12 +277,15 @@ def jmp(line):
     global programCounter
     regs["111"] = "0000000000000000"
     printline()
+    regs["111"] = "0000000000000000"
     programCounter = binary2decimal(line[8:])
 
 
 def jlt(line):
     global programCounter
     if regs["111"] == "0000000000000100":
+        # print("hehe")
+        regs["111"] = "0000000000000000"
         printline()
         programCounter = binary2decimal(line[8:])
         return
@@ -284,6 +298,7 @@ def jlt(line):
 def jgt(line):
     global programCounter
     if regs["111"] == "0000000000000010":
+        regs["111"] = "0000000000000000"
         printline()
         programCounter = binary2decimal(line[8:])
         return
@@ -296,6 +311,7 @@ def jgt(line):
 def je(line):
     global programCounter
     if regs["111"] == "0000000000000001":
+        regs["111"] = "0000000000000000"
         printline()
         programCounter = binary2decimal(line[8:])
         return
