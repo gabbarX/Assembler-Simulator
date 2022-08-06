@@ -1,5 +1,3 @@
-import sys
-
 # Mention of the Registors
 registors = {
     "R0": "000",
@@ -18,7 +16,7 @@ codes = {
     "mov": ["10010", "B"],
     "mov": ["10011", "C"],
     "ld": ["10100", "D"],
-    "st": ["10001", "D"],
+    "st": ["10101", "D"],
     "mul": ["10110", "A"],
     "div": ["10111", "C"],
     "rs": ["11000", "B"],
@@ -121,8 +119,12 @@ def printTypeA(opcode, reg1, reg2, reg3):
 
 def printTypeB(opcode, reg1, value):
     temp=value.split('$').pop()
-    ns = (f"{codes[opcode][0]}{registors[reg1]}{decimalTo8bitBinary(temp)}")
-    return ns
+    if opcode == "mov":
+        ns = (f"10010{registors[reg1]}{decimalTo8bitBinary(temp)}")
+        return ns
+    else:
+        ns = (f"{codes[opcode][0]}{registors[reg1]}{decimalTo8bitBinary(temp)}")
+        return ns
 
 
 def printTypeC(opcode, reg1, reg2):
@@ -147,12 +149,6 @@ def printTypeF(opcode):
 
 # Main program
 if __name__== "__main__":
-    
-    # with open("practiseInput.txt", "r") as file:
-    #     data = file.read().split("\n")
-    #     for i in data:
-    #         if (len(i) != 0):
-    #             initialcode.append(i)
 
 
     for line in sys.stdin:
@@ -161,30 +157,13 @@ if __name__== "__main__":
         initialcode.append(line.strip())
 
 
-    # print(initialcode)
-    # while True:
-    #     try:
-    #         line = input()
-    #     except EOFError:
-    #         break
-    #     else:
-    #         if(len(line)!=0):
-    #             initialcode.append(line)
-    # print(initialcode[-1])
-    # for i in initialcode:
-    #     print(i.strip().split())
-
     storeAddress()
-    # print(code)
     check=True
     for temp in code:
         if "FLAGS" in temp:
-            # print(temp)
             check = flagcheck(temp)
 
 
-
-    # print(check)
     if check is True:
         try:
             for temp in code:
@@ -197,13 +176,11 @@ if __name__== "__main__":
                     if (temp[2][0]) == "$":
                         n = int(temp[2][1::])
                         if (n <= 255 and n >= 0):
-                            # print((temp[0], temp[1], temp[2][1::]))
                             result.append(printTypeB(temp[0], temp[1], temp[2][1::]))
                         else:
                             print("ERROR: Illegal Immediate Value used at Line:",len(variables) + code.index(temp)+1)
                             errorcount += 1
                             quit()
-                        # result.append(printTypeB(temp[0], temp[1], temp[2]))
                         track += 1
                         continue
                     else:
@@ -256,8 +233,13 @@ if __name__== "__main__":
                 errorcount += 1
                 exit()
 
-
-            if initialcode[-1] != 'hlt':
+            temp = initialcode[-1]
+            if (":" in temp):
+                temp2 = list(temp.split())
+                hltcheck = temp2[1]
+            else:
+                hltcheck = temp
+            if hltcheck != 'hlt':
                 print("ERROR: HLT Instruction Missing or Misplaced!")
                 errorpresent = True
                 errorcount += 1
