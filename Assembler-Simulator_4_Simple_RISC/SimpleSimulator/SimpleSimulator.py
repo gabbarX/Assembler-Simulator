@@ -11,16 +11,22 @@ regs = {"000": "0000000000000000",
         "110": "0000000000000000",
         "111": "0000000000000000"}
 
+
+
 memory_address = []
 programCounter = 0
 cycle_number = 0
 x=[]
 y=[]
 
+
+
 #Utility Functions
 def memoryDump():
     for i in memory_address:
         print(i)
+
+
 
 def binary2decimal(num):
     n = str(num)[::-1]
@@ -42,6 +48,8 @@ def decimal2binary(num):
     return str(nf)
 
 
+
+
 def getbin(num):
     n = int(num)
     ns = ""
@@ -50,6 +58,9 @@ def getbin(num):
         n = n//2
     nf = ns[::-1]
     return(nf)
+
+
+
 
 def floattobinary(num,places):
     temp=str(num).split(".")
@@ -66,6 +77,9 @@ def floattobinary(num,places):
         else:
             ans+="0"
     return ans
+
+
+
 # 	whole = int(whole)
 # 	dec = int (dec)
 # 	res = bin(whole).lstrip("0b") + "."
@@ -451,6 +465,8 @@ def jgt(line):
 
 def getint(string):
     return int(string, 2)
+
+
 
 def je(line):
     global programCounter
