@@ -230,8 +230,8 @@ if __name__== "__main__":
     #     initialcode.append(line.strip())
 
     for line in sys.stdin:
-        if "" == line.rstrip():
-            break
+        # if "" == line.rstrip():
+        #     break
         initialcode.append(line.strip())
 
     storeAddress()
@@ -264,9 +264,10 @@ if __name__== "__main__":
                         track += 1
                         continue
                 elif temp[0] == "movf":
+                    # try:
                     if (temp[2][0]) == "$":
                         n = float(temp[2][1::])
-                        if (n <= 252 and n >= 0):
+                        if (n <= 252 and n >= 1):
                             l = list((movf(n)[1]))
                             a = l[2:]      
                             la = len(a)
@@ -276,18 +277,17 @@ if __name__== "__main__":
                                 la += 1
                             for i in a:
                                 ans += str(i)
-                            result.append(("00010"+str(registors[temp[1]])+str(decimalToBinaryforexp(movf(n)[0]))+str(ans)))
+                            try: 
+                                result.append(("00010"+str(registors[temp[1]])+str(decimalToBinaryforexp(movf(n)[0]))+str(ans)))
+                            except ValueError:
+                                print("ERROR: Illegal Value Immediate")
 
-                        else:
-                            print("ERROR: Illegal Immediate Value used at Line:",len(variables) + code.index(temp)+1)
-                            errorcount += 1
-                            quit()
-                        track += 1
-                        continue
                     else:
-                        result.append(printTypeC(temp[0], temp[1], temp[2]))
-                        track += 1
-                        continue
+                        print("ERROR: Illegal Immediate Value used at Line:",len(variables) + code.index(temp)+1)
+                        errorcount += 1
+                        quit()
+                    track += 1
+                    continue
 
                 if codes[temp[0]][1] == 'A':
                     result.append(printTypeA(temp[0], temp[1], temp[2], temp[3]))
@@ -342,7 +342,7 @@ if __name__== "__main__":
             else:
                 hltcheck = temp
             if hltcheck != 'hlt':
-                if 'hlt' in initialcode:
+                if 'hlt' in initialcode and initialcode.count('hlt') > 1:
                     print("ERROR: HLT Instruction is Misplaced at line", initialcode.index('hlt') + 1)
                     errorpresent = True
                     errorcount += 1
@@ -360,7 +360,7 @@ if __name__== "__main__":
 
         except:
             if (errorcount == 0):
-                print("ERROR: General Syntax Error at line", track)
+                print("ERROR: General Syntax Error at line")
                 errorpresent = True
             else:
                 exit()
