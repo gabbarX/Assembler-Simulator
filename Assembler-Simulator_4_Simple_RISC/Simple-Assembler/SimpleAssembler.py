@@ -62,7 +62,7 @@ def decimalTo8bitBinary(num):
         nf = "0" * (8 - len(nf)) + str(nf)
     return str(nf)
 
-#storing the memory address of the variable and labels in a dictionary
+
 def decimalToBinary(num):
     n = int(num)
     ns = ""
@@ -72,77 +72,99 @@ def decimalToBinary(num):
     nf = ns[::-1]
     return str(nf)
 
-def binaryToDecimal(binary):
-    decimal = 0
-    j = 0
-    for i in range(len(binary)):
-        if(int(binary[i]) == 0):
-            decimal += 0
-            j = j + 1
+
+def binary(n,m):
+    num=int(n)
+    binary=''
+    temp=bin(num)
+    temp=temp.replace('0b',"")
+    if m==1:
+        binary+='0'*(3-len(temp))
+    binary+=temp
+    return binary
+
+
+def decimal(n):
+    num=int(n)
+    binary=''
+    for i in range(10):
+        num=num*2
+        if str(num)[0]=="0":
+            return binary
+        if(str(num)[0]=="1"):
+            binary+="1"
+            num=int(str(num)[1:])
         else:
-            decimal += 2**j
-            j = j + 1
-    return decimal
+            binary+="0"
+    return binary
 
-def decimalbinaryToDecimal(binary):
-    decimal = 0
-    j = -1
-    for i in range(len(binary)):
-        if(int(binary[i]) == 0):
-            decimal += 0
-            j = j - 1
+
+def FloatingPointToBinary(n):
+    num=n
+    n=str(float(n))
+    leng=n.index('.')
+    result=''
+    temp=''
+    if float(n)%1!=0:
+        temp=[i for i in n.split('.')]
+        pow=len(binary(temp[0],0))-1
+        if(temp[0]!=0):
+            w=binary(temp[0],0)
+            result=binary(pow,1)+w[1:]+decimal(temp[1])
         else:
-            decimal += 2**j
-            j = j - 1
-    return decimal
+            result=binary(pow,1)+decimal(temp[1])
+    else:
+        temp=binary(num,0)
+        c=0
+        pow=len(temp)-1
+        if temp[-1]=="0":
+            for i in range(len(temp)-1,0,-1):
+                if temp[i]=="0" and temp[i-1]=="1":
+                    c=i
+                    break
+            temp=temp[:c]
+        result=binary(pow,1)+temp[1:]
+    if len(result) >= 9:
+        print("Error The Given Immediate Value is out of bounds")
+        quit()
+    else:
+        result+="0"*(8-len(result))
+    return result
 
-def BinarytoFloatingpoint(Instruction):
-    l = list(str(Instruction))
-    a = l[8:]
-    exp = a[0] + a[1] + a[2]
-    mantissa = a[3] + a[4] + a[5] + a[6] + a[7]
-    decimalexp = binaryToDecimal(exp)
-    mantissaexp = decimalbinaryToDecimal(mantissa)
-    ans = (2**decimalexp - 3)*(1 + mantissaexp)
-    return ans
 
-def floattobinary(number, places):
-	whole, dec = str(number).split(".")
-	whole = int(whole)
-	dec = int (dec)
-	res = bin(whole).lstrip("0b") + "."
-	for x in range(places):
-		whole, dec = str((decimal_converter(dec)) * 2).split(".")
-		dec = int(dec)
-		res += whole
-	return res
+def dectobin(n):
+    return int(n,2)
 
-def decimal_converter(num):
-	while num > 1:
-		num /= 10
-	return num
 
-def decimalToBinaryforexp(num):
-    n = int(num)
-    ns = ""
-    while n>0:
-        ns += str(n%2)
-        n = n//2
-    nf = ns[::-1]
-    if len(nf) < 3:
-        nf = "0" * (3 - len(nf)) + str(nf)
-    return str(nf)
+def BinaryToFloatingPoint(n):
+    binary=''
+    binary+='1'+n[3:]+"0"*100
+    pow=n[:3]
+    pow=dectobin(pow)
+    temp=''
+    temp=binary[:pow+1]+"."+binary[pow+1:]
+    i=0
+    k=0
+    sum=0
+    while(temp[i+1]!="."):
+        i+=1
+    for j in range(0,temp.index(".")):
+        sum+=int(temp[j])*(2**i)
+        k+=1
+        i-=1
+    i=1
+    for j in range(temp.index(".")+1,len(temp)):
+        sum+=int(temp[j])*(2**-i)
+        i+=1
+    return sum
 
-def movf(num):
-    n = num
-    count = 0
-    while(n > 2):
-        count += 1
-        n = n/2
-    inn = str(int(n))
-    linn = len(inn)
-    p = len(str(n)) - linn - 1
-    return(count, floattobinary(n, p))
+
+def movf(line):
+    l = list(line)
+    reg1 = l[1]
+    value = l[2][1:]
+    ns = (f"00010{registors[reg1]}{FloatingPointToBinary(value)}")
+    return ns
 
 def storeAddress():
     global count
@@ -248,7 +270,12 @@ if __name__== "__main__":
                     track += 1
                     continue
 
-                if temp[0] == "mov":
+                elif temp[0] == "movf":
+                    result.append(movf(temp))
+                    track += 1
+                    continue
+                
+                elif temp[0] == "mov":
                     if (temp[2][0]) == "$":
                         n = int(temp[2][1::])
                         if (n <= 255 and n >= 0):
@@ -263,31 +290,6 @@ if __name__== "__main__":
                         result.append(printTypeC(temp[0], temp[1], temp[2]))
                         track += 1
                         continue
-                elif temp[0] == "movf":
-                    # try:
-                    if (temp[2][0]) == "$":
-                        n = float(temp[2][1::])
-                        if (n <= 252 and n >= 1):
-                            l = list((movf(n)[1]))
-                            a = l[2:]      
-                            la = len(a)
-                            ans = ""
-                            while(la < 5):
-                                a.append("0")
-                                la += 1
-                            for i in a:
-                                ans += str(i)
-                            try: 
-                                result.append(("00010"+str(registors[temp[1]])+str(decimalToBinaryforexp(movf(n)[0]))+str(ans)))
-                            except ValueError:
-                                print("ERROR: Illegal Value Immediate")
-
-                    else:
-                        print("ERROR: Illegal Immediate Value used at Line:",len(variables) + code.index(temp)+1)
-                        errorcount += 1
-                        quit()
-                    track += 1
-                    continue
 
                 if codes[temp[0]][1] == 'A':
                     result.append(printTypeA(temp[0], temp[1], temp[2], temp[3]))
@@ -358,12 +360,12 @@ if __name__== "__main__":
             errorcount += 1
             exit()
 
-        except:
-            if (errorcount == 0):
-                print("ERROR: General Syntax Error at line")
-                errorpresent = True
-            else:
-                exit()
+        # except:
+        #     if (errorcount == 0):
+        #         print("ERROR: General Syntax Error at line")
+        #         errorpresent = True
+        #     else:
+        #         exit()
 
     else:
         print("Flag Error at line: ", len(variables) + code.index(temp))
