@@ -48,8 +48,6 @@ def decimal2binary(num):
     return str(nf)
 
 
-
-
 def getbin(num):
     n = int(num)
     ns = ""
@@ -60,34 +58,90 @@ def getbin(num):
     return(nf)
 
 
+def binary(n,m):
+    num=int(n)
+    binary=''
+    temp=bin(num)
+    temp=temp.replace('0b',"")
+    if m==1:
+        binary+='0'*(3-len(temp))
+    binary+=temp
+    return binary
 
 
-def floattobinary(num,places):
-    temp=str(num).split(".")
-    w=temp[0]
-    d=temp[1]
-    w=int(w)
-    d=int(d)
-    ans=bin(w).lstrip("0b")+"."
-    for i in range(places):
-        d*=2
-        if d>=1:
-            d-=1
-            ans+="1"
+def decimal(n):
+    num=int(n)
+    binary=''
+    for i in range(10):
+        num=num*2
+        if str(num)[0]=="0":
+            return binary
+        if(str(num)[0]=="1"):
+            binary+="1"
+            num=int(str(num)[1:])
         else:
-            ans+="0"
-    return ans
+            binary+="0"
+    return binary
 
 
+def FloatingPointToBinary(n):
+    num=n
+    n=str(float(n))
+    leng=n.index('.')
+    result=''
+    temp=''
+    if float(n)%1!=0:
+        temp=[i for i in n.split('.')]
+        pow=len(binary(temp[0],0))-1
+        if(temp[0]!=0):
+            w=binary(temp[0],0)
+            result=binary(pow,1)+w[1:]+decimal(temp[1])
+        else:
+            result=binary(pow,1)+decimal(temp[1])
+    else:
+        temp=binary(num,0)
+        c=0
+        pow=len(temp)-1
+        if temp[-1]=="0":
+            for i in range(len(temp)-1,0,-1):
+                if temp[i]=="0" and temp[i-1]=="1":
+                    c=i
+                    break
+            temp=temp[:c]
+        result=binary(pow,1)+temp[1:]
+    if len(result) >= 9:
+        print("Error The Given Immediate Value is out of bounds")
+        quit()
+    else:
+        result+="0"*(8-len(result))
+    return result
 
-# 	whole = int(whole)
-# 	dec = int (dec)
-# 	res = bin(whole).lstrip("0b") + "."
-# 	for x in range(places):
-# 		whole, dec = str((decimal_converter(dec)) * 2).split(".")
-# 		dec = int(dec)
-# 		res += whole
-# 	return res
+
+def dectobin(n):
+    return int(n,2)
+
+
+def BinaryToFloatingPoint(n):
+    binary=''
+    binary+='1'+n[3:]+"0"*100
+    pow=n[:3]
+    pow=dectobin(pow)
+    temp=''
+    temp=binary[:pow+1]+"."+binary[pow+1:]
+    i=0
+    k=0
+    sum=0
+    while(temp[i+1]!="."):
+        i+=1
+    for j in range(0,temp.index(".")):
+        sum+=int(temp[j])*(2**i)
+        k+=1
+        i-=1
+    i=1
+    for j in range(temp.index(".")+1,len(temp)):
+        sum+=int(temp[j])*(2**-i)
+        i+=1
+    return sum
 
 
 def plot():
@@ -96,86 +150,6 @@ def plot():
     plt.plot(x, y,'o')
     plt.savefig('output.png')
 
-def decimal_converter(num):
-	while num > 1:
-		num /= 10
-	return num
-
-
-def seperate(num):
-    n = num
-    count = 0
-    while(n > 2):
-        count += 1
-        n = n/2
-    inn = str(int(n))
-    linn = len(inn)
-    p = len(str(n)) - linn - 1
-    return(count, floattobinary(n, p))
-
-
-def decimalToBinaryforexp(num):
-    n = int(num)
-    ns = ""
-    while n>0:
-        ns += str(n%2)
-        n = n//2
-    nf = ns[::-1]
-    if len(nf) < 3:
-        nf = "0" * (3 - len(nf)) + str(nf)
-    return str(nf)
-
-
-def binaryToDecimal(binary):
-    binary = binary[::-1]
-    decimal = 0
-    j = 0
-    for i in range(len(binary)):
-        if(int(binary[i]) == 0):
-            decimal += 0
-            j = j + 1
-        else:
-            decimal += 2**j
-            j = j + 1
-    return decimal
-
-
-def decimalbinaryToDecimal(binary):
-    decimal = 0
-    j = -1
-    for i in range(len(binary)):
-        if(int(binary[i]) == 0):
-            decimal += 0
-            j = j - 1
-        else:
-            decimal += 2**j
-            j = j - 1
-    return decimal
-
-
-def BinaryToFloatingPoint(line):
-    a = list(line)
-    exp = a[0] + a[1] + a[2]
-    mantissa = a[3] + a[4] + a[5] + a[6] + a[7]
-    decimalexp = binaryToDecimal(exp)
-    mantissaexp = decimalbinaryToDecimal(mantissa)
-    ans = (2**(decimalexp))*(1 + mantissaexp)
-    return ans
-
-
-def FloatingPointToBinary(n):
-    if (n <= 252 and n >= 0):
-        l = list((seperate(n)[1]))
-        a = l[2:]      
-        la = len(a)
-        ans = ""
-        while(la < 5):
-            a.append("0")
-            la += 1
-        for i in a:
-            ans += str(i)
-        temp = (str(decimalToBinaryforexp(seperate(n)[0]))+str(ans))
-        return (temp)
 
 def givepc(value):
     x = getbin(value)
@@ -211,17 +185,12 @@ def add(line):
 
 def addf(line):
     global programCounter
-    reg1 = BinaryToFloatingPoint(regs[line[7:10]])
-    reg2 = BinaryToFloatingPoint(regs[line[10:13]])
+    reg1 = BinaryToFloatingPoint(regs[line[7:10]][8:])
+    reg2 = BinaryToFloatingPoint(regs[line[10:13]][8:])
     reg3 = line[13:]
     reg4 = reg1 + reg2
 
-    if reg4 > 256 or reg4 < 0:
-        regs["111"] = "0000000000001000"
-    else:
-        regs["111"] = "0000000000000000"
-
-    regs[reg3] = FloatingPointToBinary(reg4)
+    regs[reg3] = FloatingPointToBinary((reg4))
     printline()
     programCounter += 1
 
@@ -245,15 +214,10 @@ def sub(line):
 
 def subf(line):
     global programCounter
-    reg1 = BinaryToFloatingPoint(regs[line[7:10]])
-    reg2 = BinaryToFloatingPoint(regs[line[10:13]])
+    reg1 = BinaryToFloatingPoint(regs[line[7:10]][8:])
+    reg2 = BinaryToFloatingPoint(regs[line[10:13]][8:])
     reg3 = line[13:]
     reg4 = reg1 - reg2
-
-    if reg4 > 256 or reg4 < 0:
-        regs["111"] = "0000000000001000"
-    else:
-        regs["111"] = "0000000000000000"
 
     regs[reg3] = FloatingPointToBinary(reg4)
     printline()
