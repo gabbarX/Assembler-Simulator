@@ -13,12 +13,9 @@ regs = {"000": "0000000000000000",
 
 memory_address = []
 programCounter = 0
-track = 0
+cycle_number = 0
 x=[]
 y=[]
-
-def getint(string):
-    return int(string, 2)
 
 #Utility Functions
 def memoryDump():
@@ -44,6 +41,7 @@ def decimal2binary(num):
         nf = "0" * (16 - len(nf)) + str(nf)
     return str(nf)
 
+
 def getbin(num):
     n = int(num)
     ns = ""
@@ -52,6 +50,118 @@ def getbin(num):
         n = n//2
     nf = ns[::-1]
     return(nf)
+
+def floattobinary(num,places):
+    temp=str(num).split(".")
+    w=temp[0]
+    d=temp[1]
+    w=int(w)
+    d=int(d)
+    ans=bin(w).lstrip("0b")+"."
+    for i in range(places):
+        d*=2
+        if d>=1:
+            d-=1
+            ans+="1"
+        else:
+            ans+="0"
+    return ans
+# 	whole = int(whole)
+# 	dec = int (dec)
+# 	res = bin(whole).lstrip("0b") + "."
+# 	for x in range(places):
+# 		whole, dec = str((decimal_converter(dec)) * 2).split(".")
+# 		dec = int(dec)
+# 		res += whole
+# 	return res
+
+
+def plot():
+    plt.xlabel('Cycle Number')
+    plt.ylabel("Memory Address")
+    plt.plot(x, y,'o')
+    plt.savefig('output.png')
+
+def decimal_converter(num):
+	while num > 1:
+		num /= 10
+	return num
+
+
+def seperate(num):
+    n = num
+    count = 0
+    while(n > 2):
+        count += 1
+        n = n/2
+    inn = str(int(n))
+    linn = len(inn)
+    p = len(str(n)) - linn - 1
+    return(count, floattobinary(n, p))
+
+
+def decimalToBinaryforexp(num):
+    n = int(num)
+    ns = ""
+    while n>0:
+        ns += str(n%2)
+        n = n//2
+    nf = ns[::-1]
+    if len(nf) < 3:
+        nf = "0" * (3 - len(nf)) + str(nf)
+    return str(nf)
+
+
+def binaryToDecimal(binary):
+    binary = binary[::-1]
+    decimal = 0
+    j = 0
+    for i in range(len(binary)):
+        if(int(binary[i]) == 0):
+            decimal += 0
+            j = j + 1
+        else:
+            decimal += 2**j
+            j = j + 1
+    return decimal
+
+
+def decimalbinaryToDecimal(binary):
+    decimal = 0
+    j = -1
+    for i in range(len(binary)):
+        if(int(binary[i]) == 0):
+            decimal += 0
+            j = j - 1
+        else:
+            decimal += 2**j
+            j = j - 1
+    return decimal
+
+
+def BinaryToFloatingPoint(line):
+    a = list(line)
+    exp = a[0] + a[1] + a[2]
+    mantissa = a[3] + a[4] + a[5] + a[6] + a[7]
+    decimalexp = binaryToDecimal(exp)
+    mantissaexp = decimalbinaryToDecimal(mantissa)
+    ans = (2**(decimalexp))*(1 + mantissaexp)
+    return ans
+
+
+def FloatingPointToBinary(n):
+    if (n <= 252 and n >= 0):
+        l = list((seperate(n)[1]))
+        a = l[2:]      
+        la = len(a)
+        ans = ""
+        while(la < 5):
+            a.append("0")
+            la += 1
+        for i in a:
+            ans += str(i)
+        temp = (str(decimalToBinaryforexp(seperate(n)[0]))+str(ans))
+        return (temp)
 
 def givepc(value):
     x = getbin(value)
@@ -62,11 +172,9 @@ def givepc(value):
 
 def printline():
     print(givepc(programCounter), end=' ')
-    # regs["111"] = "0000000000000000"
     for i in regs:
         print(regs[i], end=' ')
     print()
-    pass
 
 
 #Functions for Instruction
@@ -83,6 +191,23 @@ def add(line):
         regs["111"] = "0000000000000000"
 
     regs[reg3] = decimal2binary(reg4)
+    printline()
+    programCounter += 1
+
+
+def addf(line):
+    global programCounter
+    reg1 = BinaryToFloatingPoint(regs[line[7:10]])
+    reg2 = BinaryToFloatingPoint(regs[line[10:13]])
+    reg3 = line[13:]
+    reg4 = reg1 + reg2
+
+    if reg4 > 256 or reg4 < 0:
+        regs["111"] = "0000000000001000"
+    else:
+        regs["111"] = "0000000000000000"
+
+    regs[reg3] = FloatingPointToBinary(reg4)
     printline()
     programCounter += 1
 
@@ -104,6 +229,23 @@ def sub(line):
     programCounter += 1
 
 
+def subf(line):
+    global programCounter
+    reg1 = BinaryToFloatingPoint(regs[line[7:10]])
+    reg2 = BinaryToFloatingPoint(regs[line[10:13]])
+    reg3 = line[13:]
+    reg4 = reg1 - reg2
+
+    if reg4 > 256 or reg4 < 0:
+        regs["111"] = "0000000000001000"
+    else:
+        regs["111"] = "0000000000000000"
+
+    regs[reg3] = FloatingPointToBinary(reg4)
+    printline()
+    programCounter += 1
+
+
 def movimm(line):
     global programCounter
     reg = line[5:8]
@@ -113,21 +255,18 @@ def movimm(line):
     programCounter += 1
 
 
-# def movf(line):
-#     # l = list(str(line))
-#     # a = l[8:]
-#     # exp = a[0] + a[1] + a[2]
-#     # mantissa = a[3] + a[4] + a[5] + a[6] + a[7]
-#     # decimalexp = binaryToDecimal(exp)
-#     # mantissaexp = decimalbinaryToDecimal(mantissa)
-#     # ans = (2**decimalexp - 3)*(1 + mantissaexp)
-#     reg = line[5:8]
-#     value = IEEE2decimal(line[8:])
+def movf(line):
+    global programCounter
+    reg = line[5:8]
+    value = line[8:]
+    regs[reg] = "00000000" + value
+    printline()
+    programCounter += 1
+
 
 def movreg(line):
     global programCounter
-    regs[line[13:]]=regs[line[10:13]]
-    # print("hehe",line[10:13], line[13:])
+    regs[line[13:]] = regs[line[10:13]]
     regs["111"] = "0000000000000000"
     printline()
     programCounter += 1
@@ -159,7 +298,7 @@ def mul(line):
     reg3 = line[13:]
     reg4 = reg2 * reg1
 
-    if reg4 > 256 or reg4 < 0:
+    if reg4 > 65535 or reg4 < 0:
         regs["111"] = "0000000000001000"
     else:
         regs["111"] = "0000000000000000"
@@ -187,7 +326,7 @@ def rs(line):
     value = line[8:]
     regValue = binary2decimal(regs[reg])
 
-    regs[reg] = decimal2binary(regValue >> value)
+    regs[reg] = decimal2binary(int(regValue) >> int(value))
 
     regs["111"] = "0000000000000000"
     printline()
@@ -200,7 +339,7 @@ def ls(line):
     value = line[8:]
     regValue = binary2decimal(regs[reg])
 
-    regs[reg] = decimal2binary(regValue << value)
+    regs[reg] = decimal2binary(int(regValue) << int(value))
 
     regs["111"] = "0000000000000000"
     printline()
@@ -209,11 +348,11 @@ def ls(line):
 
 def xorop(line):
     global programCounter
-    reg1 = line[7:10]
-    reg2 = decimal2binary(line[10:13])
-    reg3 = decimal2binary(line[13:])
+    reg1 = decimal2binary(regs[line[7:10]])
+    reg2 = decimal2binary(regs[line[10:13]])
+    reg3 = line[13:]
 
-    regs[reg1] = decimal2binary(reg2 ^ reg3)
+    regs[reg3] = decimal2binary(int(reg2) ^ int(reg1))
 
     regs["111"] = "0000000000000000"
     printline()
@@ -222,24 +361,23 @@ def xorop(line):
 
 def orop(line):
     global programCounter
-    reg1 = line[7:10]
-    reg2 = decimal2binary(line[10:13])
-    reg3 = decimal2binary(line[13:])
+    reg1 = decimal2binary(regs[line[7:10]])
+    reg2 = decimal2binary(regs[line[10:13]])
+    reg3 = line[13:]
 
-    regs[reg1] = decimal2binary(reg2 | reg3)
+    regs[reg3] = decimal2binary(int(reg2) | int(reg1))
 
     regs["111"] = "0000000000000000"
     printline()
     programCounter += 1
 
-
 def andop(line):
     global programCounter
-    reg1 = line[7:10]
-    reg2 = decimal2binary(line[10:13])
-    reg3 = decimal2binary(line[13:])
+    reg1 = decimal2binary(regs[line[7:10]])
+    reg2 = decimal2binary(regs[line[10:13]])
+    reg3 = line[13:]
 
-    regs[reg1] = decimal2binary(reg2 & reg3)
+    regs[reg3] = decimal2binary(int(reg2) & int(reg1))
 
     regs["111"] = "0000000000000000"
     printline()
@@ -248,10 +386,16 @@ def andop(line):
 
 def notop(line):
     global programCounter
-    reg1 = line[10:13]
-    reg2 = decimal2binary(line[13:])
-    regs[reg1] = decimal2binary(~reg2)
-
+    reg1 = regs[line[10:13]]
+    reg2 = line[13:]
+    newreg = ""
+    for i in reg1:
+        if i == '0':
+            newreg += "1"
+        if i == '1':
+            newreg += "0"    
+    
+    regs[reg2] = newreg
     regs["111"] = "0000000000000000"
     printline()
     programCounter += 1
@@ -268,8 +412,8 @@ def compare(line):
         regs["111"] = "0000000000000010"
     if reg1 == reg2:
         regs["111"] = "0000000000000001"
+    
     printline()
-    # regs["111"] = "0000000000000000"
     programCounter += 1
 
 
@@ -277,14 +421,12 @@ def jmp(line):
     global programCounter
     regs["111"] = "0000000000000000"
     printline()
-    regs["111"] = "0000000000000000"
     programCounter = binary2decimal(line[8:])
 
 
 def jlt(line):
     global programCounter
     if regs["111"] == "0000000000000100":
-        # print("hehe")
         regs["111"] = "0000000000000000"
         printline()
         programCounter = binary2decimal(line[8:])
@@ -307,6 +449,8 @@ def jgt(line):
     printline()
     programCounter += 1
 
+def getint(string):
+    return int(string, 2)
 
 def je(line):
     global programCounter
@@ -323,7 +467,6 @@ def je(line):
 
 def hlt(line):
     global programCounter
-    regs["111"] = "0000000000000000"
     printline()
     programCounter += 1
 
@@ -381,14 +524,16 @@ def perform(line):
         je(line)
     elif opcode == "01010":
         hlt(line)
+    elif opcode == "00000":
+        addf(line)
+    elif opcode == "00001":
+        subf(line)
+    elif opcode == "00010":
+        movf(line)
 
-def plot():
-    plt.xlabel('Cycle Number')
-    plt.ylabel("Memory Address")
-    plt.plot(x, y,'o')
-    plt.savefig('output.png')
 
 if __name__ == '__main__':
+    track = 0
     commands=[]
     #Taking Input
     for line in sys.stdin:
@@ -396,9 +541,9 @@ if __name__ == '__main__':
             break
         commands.append(line.strip())
 
+
     for i in range(0,256):
         if i < len(commands):
-            # print("hehe",commands)
             memory_address.append(commands[i])
         if i >= len(commands):
             memory_address.append('0'*16)
